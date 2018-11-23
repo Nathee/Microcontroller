@@ -29,8 +29,8 @@ void waitC(void);
 // Table sensor Input
 
 //Load cell
-#define loadcell_sensor01 A14
-#define loadcell_sensor02 A15
+#define loadcell_sensor01 A15
+#define loadcell_sensor02 A14
 
 HX711 balanza(loadcell_sensor02, loadcell_sensor01);
 //Load cell
@@ -71,8 +71,8 @@ void check_pr() {
   sensor[6] = digitalRead(table_sensor01);
   delay(10);
   Serial.print("sensor[5] : ");
-  Serial.println(sensor[5]);
-  Serial.print("sensor[6] : ");
+  Serial.print(sensor[5]);
+  Serial.print("    sensor[6] : ");
   Serial.println(sensor[6]);
 }
 
@@ -117,6 +117,9 @@ void loop()
   sw12 = digitalRead(table12);
   check_pr();
 
+  checkweight = balanza.get_units(10), 0;
+  Serial.println(checkweight);
+
   while (sw01 == HIGH)
   {
     check_pr();
@@ -126,7 +129,7 @@ void loop()
       {
         table_error_code = "01";
         motor_output(0, 0, 0, 0);
-        delay(5000);
+        waitC();
       } else {
         read_sensor_values();
         main_Control();
@@ -344,10 +347,11 @@ void main_Control()
 }
 
 void waitC() {
+  Serial.print("in waitC");
+  Serial.println(checkweight);
   while (1) {
     unsigned long currentMillis05 = millis();
     unsigned long currentMillis10 = millis();
-    digitalWrite(led1, HIGH);
     checkweight = balanza.get_units(1), 0;
     if ((currentMillis05 - previousMillis05 >= interval05) && (checkweight >= -5 && checkweight < 20) ) {
       // save the last time you blinked the LED
