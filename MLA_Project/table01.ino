@@ -1,9 +1,19 @@
+#include "HX711.h"
+
 byte line_error_code = 0, sw01 = 0, sw02 = 0, sw12 = 0;
 byte sensor[7] = {0, 0, 0, 0, 0, 0, 0};
 String table_error_code = "00", tCode = "00";
+int checkweight = 0;
+
+unsigned long previousMillis05 = 0, previousMillis10 = 0;
+
+const long interval10 = 10000;
+const long interval05 = 5000;
+
 void read_sensor_values(void);
 void main_Control(void);
 void check(void);
+void waitC(void);
 
 // Line sensor Input
 #define sensor01 A1
@@ -17,6 +27,13 @@ void check(void);
 #define table_sensor01 A6
 #define table_sensor02 A7
 // Table sensor Input
+
+//Load cell
+#define loadcell_sensor01 A14
+#define loadcell_sensor02 A15
+
+HX711 balanza(loadcell_sensor02, loadcell_sensor01);
+//Load cell
 
 // select Table  Button
 #define table01 10
@@ -84,6 +101,13 @@ void setup()
   pinMode(table01, INPUT);
   pinMode(table02, INPUT);
   // select Table button
+
+  Serial.print("Lectura del valor del ADC:  ");
+  Serial.println(balanza.read());
+  Serial.println("Destarando...");
+  Serial.println("...");
+  balanza.set_scale(207.5);
+  balanza.tare(20);
 }
 
 void loop()
@@ -129,7 +153,8 @@ void loop()
       {
         table_error_code = "10";
         motor_output(0, 0, 0, 0);
-        delay(5000);
+        waitC();
+        //        delay(5000);
       } else {
         read_sensor_values();
         main_Control();
@@ -315,5 +340,28 @@ void main_Control()
   else if (line_error_code == 0)      // line_error_code code:Stop
   {
     motor_output(0, 0, 0, 0);
+  }
+}
+
+void waitC() {
+  while (1) {
+    unsigned long currentMillis05 = millis();
+    unsigned long currentMillis10 = millis();
+    digitalWrite(led1, HIGH);
+    checkweight = balanza.get_units(1), 0;
+    if ((currentMillis05 - previousMillis05 >= interval05) && (checkweight >= -5 && checkweight < 20) ) {
+      // save the last time you blinked the LED
+      Serial.println(previousMillis05);
+      Serial.println(currentMillis05);
+      previousMillis05 = currentMillis05;
+      Serial.println("in 05");
+      break;
+    }
+    if (currentMillis10 - previousMillis10 >= interval10 && checkweight >= 22 ) {
+      // save the last time you blinked the LED
+      previousMillis10 = currentMillis10;
+      Serial.println("in 10");
+      break;
+    }
   }
 }
