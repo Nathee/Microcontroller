@@ -100,7 +100,7 @@ void loop()
     {
       if (sensor[5] == HIGH && sensor[6] == LOW)
       {
-        sucess("01");
+        table_error_code = "01";
         motor_output(0, 0, 0, 0);
         delay(5000);
       } else {
@@ -123,13 +123,29 @@ void loop()
   while (sw02 == HIGH)
   {
     check_pr();
-    if (sensor[5] == LOW && sensor[6] == HIGH)
+    if (table_error_code == "00")
     {
-      sucess("10");
-      break;
+      if (sensor[5] == LOW && sensor[6] == HIGH)
+      {
+        table_error_code = "10";
+        motor_output(0, 0, 0, 0);
+        delay(5000);
+      } else {
+        read_sensor_values();
+        main_Control();
+      }
     }
-    read_sensor_values();
-    main_Control();
+    if (table_error_code == "10")
+    {
+      if (sensor[5] == HIGH && sensor[6] == HIGH)
+      {
+        sucess("00");
+        break;
+      } else {
+        read_sensor_values();
+        main_Control();
+      }
+    }
   }
   while (sw12 == HIGH)
   {
