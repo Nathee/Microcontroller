@@ -3,7 +3,7 @@
 byte line_error_code = 0, sw01 = 0, sw02 = 0, sw12 = 0;
 byte sensor[7] = {0, 0, 0, 0, 0, 0, 0};
 String table_error_code = "00", tCode = "00";
-int checkweight = 0;
+int checkweight = 0, dLoop = 0;
 
 unsigned long previousMillis05 = 0, previousMillis10 = 0;
 
@@ -117,7 +117,7 @@ void loop()
   sw12 = digitalRead(table12);
   check_pr();
 
-  checkweight = balanza.get_units(10), 0;
+  checkweight = balanza.get_units(1), 0;
   Serial.println(checkweight);
 
   while (sw01 == HIGH)
@@ -157,7 +157,6 @@ void loop()
         table_error_code = "10";
         motor_output(0, 0, 0, 0);
         waitC();
-        //        delay(5000);
       } else {
         read_sensor_values();
         main_Control();
@@ -188,7 +187,7 @@ void loop()
         table_error_code = "01";
         sw01 = 0;
         motor_output(0, 0, 0, 0);
-        delay(5000);
+        waitC();
       } else {
         read_sensor_values();
         main_Control();
@@ -201,7 +200,7 @@ void loop()
         table_error_code = "10";
         sw02 = 0;
         motor_output(0, 0, 0, 0);
-        delay(5000);
+        waitC();
       } else {
         read_sensor_values();
         main_Control();
@@ -348,23 +347,13 @@ void main_Control()
 
 void waitC() {
   Serial.print("in waitC");
-  Serial.println(checkweight);
-  while (1) {
-    unsigned long currentMillis05 = millis();
-    unsigned long currentMillis10 = millis();
-    checkweight = balanza.get_units(1), 0;
-    if ((currentMillis05 - previousMillis05 >= interval05) && (checkweight >= -5 && checkweight < 20) ) {
-      // save the last time you blinked the LED
-      Serial.println(previousMillis05);
-      Serial.println(currentMillis05);
-      previousMillis05 = currentMillis05;
-      Serial.println("in 05");
-      break;
-    }
-    if (currentMillis10 - previousMillis10 >= interval10 && checkweight >= 22 ) {
-      // save the last time you blinked the LED
-      previousMillis10 = currentMillis10;
-      Serial.println("in 10");
+  checkweight = balanza.get_units(1), 0;
+  //  delay(5000);
+  while (checkweight > 22) {
+    dLoop += 1;
+    delay(5000);
+    if (dLoop == 2) {
+      dLoop = 0;
       break;
     }
   }
