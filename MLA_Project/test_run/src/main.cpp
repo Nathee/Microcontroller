@@ -233,43 +233,43 @@ void main_Control()
 {
   if (line_error_code == 17)
   {
-    motor_output(45, 45, 255, 255);
+    motor_output(34, 45, 255, 255);
   }
   else if (line_error_code == 4)
   {
-    motor_output(45, 45, 255, 255);
+    motor_output(35, 45, 255, 255);
   }
   else if (line_error_code == 3)
   {
-    motor_output(40, 0, 255, 0);
+    motor_output(45, 15, 255, 255);
   }
   else if (line_error_code == 7)
   {
-    motor_output(50, 0, 255, 0);
+    motor_output(50, 25, 255, 255);
   }
   else if (line_error_code == 15)
   {
-    motor_output(70, 20, 255, 0);
+    motor_output(70, 35, 255, 0);
   }
   else if (line_error_code == 19)
   {
-    motor_output(30, 0, 255, 0);
+    motor_output(35, 15, 255, 255);
   }
   else if (line_error_code == 24)
   {
-    motor_output(0, 40, 0, 255);
+    motor_output(15, 45, 255, 255);
   }
   else if (line_error_code == 25)
   {
-    motor_output(0, 30, 0, 255);
+    motor_output(15, 35, 255, 255);
   }
   else if (line_error_code == 28)
   {
-    motor_output(0, 50, 0, 255);
+    motor_output(25, 50, 255, 255);
   }
   else if (line_error_code == 30)
   {
-    motor_output(20, 70, 0, 255);
+    motor_output(35, 70, 0, 255);
   }
   else if (line_error_code == 31)
   {
@@ -277,14 +277,14 @@ void main_Control()
   }
   else if (line_error_code == 1)
   {
-    motor_output(20, 70, 0, 255);
+    motor_output(0, 85, 0, 255);
   }
   else if (line_error_code == 16)
   {
-    motor_output(70, 20, 255, 0);
+    motor_output(85, 0, 255, 0);
   }
-  else if (line_error_code == 0)
-  { // line_error_code code:Stop
+  else if (line_error_code == 0)      // line_error_code code:Stop
+  {                                  
     motor_output(0, 0, 0, 0);
   }
 }
